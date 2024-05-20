@@ -77,13 +77,18 @@ func configureHandlers(router *gin.Engine) {
 
 	router.GET("/", func(c *gin.Context) {
 		c.AddParam("id", "roulette")
-		handlers.AxiomDetailsHandlerHtml(c)
+		handlers.AxiomDetailsHandlerHtml(staticEmbeded, c)
 	})
 
 	router.StaticFileFS("/robots.txt", "frontend/static/robots.txt", http.FS(staticEmbeded))
 
-	router.GET("/:id", handlers.AxiomDetailsHandlerHtml)
-	router.GET("/axioms/:id", handlers.AxiomDetailsHandlerHtml)
+	router.GET("/:id", func(ctx *gin.Context) {
+		handlers.AxiomDetailsHandlerHtml(staticEmbeded, ctx)
+	})
+
+	router.GET("/axioms/:id", func(ctx *gin.Context) {
+		handlers.AxiomDetailsHandlerHtml(staticEmbeded, ctx)
+	})
 
 	api := router.Group("/api")
 	{

@@ -21,3 +21,7 @@ func (axiom Axiom) AudioUrl() string {
 func (axiom Axiom) ToQuote() string {
 	return fmt.Sprintf("%d - %s\r\n%s", axiom.Number, axiom.Title, axiom.Description)
 }
+
+func (axiom Axiom) ImageUrl() string {
+	return fmt.Sprintf("frontend/static/images/axioms/%d.jpg", axiom.Number)
+}

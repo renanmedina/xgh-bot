@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"embed"
 	"errors"
 	"net/http"
 	"strconv"
@@ -51,12 +52,26 @@ func AxiomDetailsHandlerJson(c *gin.Context) {
 	c.JSON(statusCode, axiom)
 }
 
-func AxiomDetailsHandlerHtml(c *gin.Context) {
+func AxiomDetailsHandlerHtml(fs embed.FS, c *gin.Context) {
 	axiom, statusCode, err := fetchAxiomHandler(c.Param("id"))
 
 	if err != nil {
 		c.JSON(statusCode, gin.H{"error": err.Error()})
 		return
+	}
+
+	imageParam, err := strconv.Atoi(c.Query("image"))
+
+	if err == nil {
+		if imageParam == 1 {
+			xghImage, err := fs.ReadFile(axiom.ImageUrl())
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			}
+
+			c.Data(http.StatusOK, "image/jpeg", xghImage)
+			return
+		}
 	}
 
 	autoplayUrl := "/assets/static/audios/horse_sound.mp3"
